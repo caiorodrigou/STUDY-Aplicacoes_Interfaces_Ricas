@@ -1,2 +1,125 @@
-<p>artwork works!</p>
-<p-button label="Check" />
+<div class="fixed inset-0 -z-10 bg-gradient-to-br from-slate-900 via-slate-950 to-cyan-950"></div>
+
+<div class="min-h-screen w-full flex items-center justify-center p-6">
+    
+    <p-card styleClass="w-full max-w-6xl shadow-2xl !bg-slate-900/80 !text-slate-100 !border !border-slate-700/50 backdrop-blur-xl rounded-xl overflow-hidden">
+        
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 px-2">
+            <h1 class="!text-cyan-400 font-extrabold text-3xl tracking-tight">Galeria de Artes</h1>
+            
+            <div class="flex flex-wrap gap-3 items-center">
+                <p-iconfield>
+                    <p-inputicon class="pi pi-search !text-slate-400" />
+                    <input pInputText type="text" 
+                           (input)="dt.filterGlobal($any($event.target).value, 'contains')" 
+                           placeholder="Buscar por descrição ou estilo..." 
+                           class="!bg-slate-950/50 !text-slate-100 !border-slate-700 placeholder:!text-slate-500 focus:!border-cyan-500 !w-64 md:!w-80 rounded-lg transition-all" />
+                </p-iconfield>
+
+                <p-button label="Adicionar Arte" icon="pi pi-plus" 
+                          styleClass="!bg-cyan-500 !border-none hover:!bg-cyan-400 !text-slate-950 font-bold px-4 py-2 shadow-[0_0_15px_rgba(34,211,238,0.3)]" 
+                          (onClick)="abrirDialog()">
+                </p-button>
+            </div>
+        </div>
+
+        <p-table #dt [value]="artworks" dataKey="id" editMode="row" 
+                 [tableStyle]="{'min-width': '50rem'}" 
+                 [globalFilterFields]="['descricao', 'tipoArt']">
+                 
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:15%">Imagem</th>
+                    <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:30%" pSortableColumn="descricao">Descrição <p-sortIcon field="descricao" class="!text-slate-500"></p-sortIcon></th>
+                    <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:20%" pSortableColumn="tipoArt">Estilo <p-sortIcon field="tipoArt" class="!text-slate-500"></p-sortIcon></th>
+                    <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:15%">Privacidade</th>
+                    <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:20%">Ações</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-art let-editing="editing" let-ri="rowIndex" >
+                <tr [pEditableRow]="art" class="hover:!bg-slate-800/40 transition-colors border-b border-slate-800/50">
+                    
+                    <td class="!bg-transparent !py-4">
+                        <img [src]="art.img.toString()" alt="Arte" class="w-14 h-14 rounded-lg shadow-lg object-cover !border !border-slate-700" />
+                    </td>
+                    
+                    <td class="!bg-transparent !text-slate-300">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="art.descricao" class="w-full !bg-slate-950 !text-cyan-50 !border-slate-700 focus:!border-cyan-500" required />
+                            </ng-template>
+                            <ng-template pTemplate="output">{{ art.descricao }}</ng-template>
+                        </p-cellEditor>
+                    </td>
+                    
+                    <td class="!bg-transparent">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <p-select [options]="opcoesTipoArt" [(ngModel)]="art.tipoArt" appendTo="body" class="w-full" styleClass="!bg-slate-950 !text-slate-100 !border-slate-700"></p-select>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                <p-tag [value]="art.tipoArt" [style]="{'background': 'rgba(34, 211, 238, 0.1)', 'color': '#22d3ee', 'border': '1px solid rgba(34, 211, 238, 0.2)'}"></p-tag>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    
+                    <td class="!bg-transparent">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <div class="flex items-center gap-2">
+                                    <p-checkbox [(ngModel)]="art.privado" [binary]="true" inputId="privado-{{art.id}}"></p-checkbox>
+                                    <label for="privado-{{art.id}}" class="!text-slate-400">{{ art.privado ? 'Privado' : 'Público' }}</label>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                <div class="flex items-center gap-2">
+                                    <i class="pi" [ngClass]="{'pi-lock !text-rose-400': art.privado, 'pi-globe !text-emerald-400': !art.privado}"></i>
+                                    <span [ngClass]="art.privado ? '!text-rose-400' : '!text-emerald-400'">{{ art.privado ? 'Privado' : 'Público' }}</span>
+                                </div>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    
+                    <td class="!bg-transparent">
+                        <div class="flex items-center gap-2">
+                            <p-button *ngIf="!editing" pInitEditableRow icon="pi pi-pencil" (onClick)="onRowEditInit(art)" [text]="true" [rounded]="true" styleClass="!text-cyan-400 hover:!bg-cyan-500/10"></p-button>
+                            <p-button *ngIf="!editing" icon="pi pi-trash" (onClick)="excluir(art.id)" [text]="true" [rounded]="true" styleClass="!text-rose-500 hover:!bg-rose-500/10"></p-button>
+                            
+                            <p-button *ngIf="editing" pSaveEditableRow icon="pi pi-check" (onClick)="onRowEditSave(art)" [text]="true" [rounded]="true" styleClass="!text-emerald-400 hover:!bg-emerald-500/10"></p-button>
+                            <p-button *ngIf="editing" pCancelEditableRow icon="pi pi-times" (onClick)="onRowEditCancel(art, ri)" [text]="true" [rounded]="true" styleClass="!text-rose-400 hover:!bg-rose-500/10"></p-button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</div>
+
+<p-dialog header="Adicionar Nova Arte" [(visible)]="exibirDialog" [modal]="true" [style]="{ width: '28rem' }" 
+          styleClass="!bg-slate-900 !border !border-slate-700 !text-slate-100 shadow-2xl">
+    <div class="flex flex-col gap-5 mt-6 px-2">
+        <div class="flex flex-col gap-2">
+            <label class="font-semibold !text-slate-300 ml-1">Descrição da Obra</label>
+            <input pInputText [(ngModel)]="novaArtDescricao" placeholder="Ex: Noite Estrelada..." class="!bg-slate-950 !text-slate-100 !border-slate-700 focus:!border-cyan-500 rounded-lg" />
+        </div>
+        <div class="flex flex-col gap-2">
+            <label class="font-semibold !text-slate-300 ml-1">URL da Imagem</label>
+            <input pInputText [(ngModel)]="novaArtImgUrl" placeholder="https://link-da-imagem.com" class="!bg-slate-950 !text-slate-100 !border-slate-700 focus:!border-cyan-500 rounded-lg" />
+        </div>
+        <div class="flex flex-col gap-2">
+            <label class="font-semibold !text-slate-300 ml-1">Estilo Artístico</label>
+            <p-select [options]="opcoesTipoArt" [(ngModel)]="novaArtTipo" appendTo="body" class="w-full" styleClass="!bg-slate-950 !text-slate-100 !border-slate-700 rounded-lg"></p-select>
+        </div>
+        <div class="flex items-center gap-3 mt-2 bg-slate-950/40 p-3 rounded-lg border border-slate-800">
+            <p-checkbox [(ngModel)]="novaArtPrivado" [binary]="true" inputId="privado-nova"></p-checkbox>
+            <label for="privado-nova" class="cursor-pointer !text-slate-300 select-none">Tornar esta obra privada?</label>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <div class="flex justify-end gap-3 pb-2 pr-2">
+            <p-button label="Cancelar" [text]="true" styleClass="!text-slate-400 hover:!text-slate-200" (onClick)="exibirDialog = false"></p-button>
+            <p-button label="Salvar Obra" icon="pi pi-check" styleClass="!bg-cyan-500 !border-none !text-slate-950 font-bold px-6 shadow-lg" (onClick)="salvarNovaArt()"></p-button>
+        </div>
+    </ng-template>
+</p-dialog>
