@@ -34,6 +34,7 @@ export interface Artwork {
   ],
   templateUrl: './artwork.html'
 })
+
 export class ArtworkComponent implements OnInit {
   artworks: Artwork[] = [];
   clonedArtworks: { [s: number]: Artwork } = {};

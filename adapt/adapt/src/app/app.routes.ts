@@ -1,7 +1,13 @@
 import { Routes } from '@angular/router';
-import { ArtworkComponent } from './artwork/artwork';
+import { ArtworkComponent } from './components/artwork/artwork';
+import { Home } from './pages/home/home';
 
 export const routes: Routes = [
-    {path: '', redirectTo: 'artwork', pathMatch: "full"}, 
-    {path: 'artwork', component: ArtworkComponent}
+  {
+    path: '', // Caminho vazio significa a raiz da URL (ex: localhost:4200/)
+    component: Home
+  },
+
+  { path: 'artwork', component: ArtworkComponent }
+
 ];
