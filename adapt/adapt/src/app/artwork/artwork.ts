@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-// PrimeNG Modules
+
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
@@ -13,16 +13,8 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { DialogModule } from 'primeng/dialog';
 import { IconFieldModule } from 'primeng/iconfield';  
 import { InputIconModule } from 'primeng/inputicon';   
-
-export type TipoArt = 'Digital' | 'Moderna' | 'Classica' | 'Abstrata' | 'Escultura' | 'Fotografia';
-
-export interface Artwork {
-    id: number;
-    img: URL;
-    descricao: string;
-    tipoArt: TipoArt;
-    privado: boolean;
-}
+import { Iartwork } from '../model/artwork';
+import { TipoArt } from '../model/artwork';
 
 @Component({
   selector: 'app-artwork-table',
@@ -35,8 +27,8 @@ export interface Artwork {
   templateUrl: './artwork.html'
 })
 export class ArtworkComponent implements OnInit {
-  artworks: Artwork[] = [];
-  clonedArtworks: { [s: number]: Artwork } = {};
+  artworks: Iartwork[] = [];
+  clonedArtworks: { [s: number]: Iartwork } = {};
 
   exibirDialog: boolean = false;
   novaArtDescricao: string = '';
@@ -72,7 +64,7 @@ export class ArtworkComponent implements OnInit {
     const novoId = this.artworks.length > 0 ? Math.max(...this.artworks.map(a => a.id)) + 1 : 1;
     const urlFinal = this.novaArtImgUrl.trim() ? this.novaArtImgUrl : 'https://placehold.co/60x60';
 
-    const arteParaAdicionar: Artwork = {
+    const arteParaAdicionar: Iartwork = {
       id: novoId,
       descricao: this.novaArtDescricao,
       tipoArt: this.novaArtTipo,
@@ -84,9 +76,9 @@ export class ArtworkComponent implements OnInit {
     this.exibirDialog = false;
   }
 
-  onRowEditInit(art: Artwork) { this.clonedArtworks[art.id] = { ...art }; }
-  onRowEditSave(art: Artwork) { if (art.descricao.trim().length > 0) { delete this.clonedArtworks[art.id]; } }
-  onRowEditCancel(art: Artwork, index: number) { this.artworks[index] = this.clonedArtworks[art.id]; delete this.clonedArtworks[art.id]; }
+  onRowEditInit(art: Iartwork) { this.clonedArtworks[art.id] = { ...art }; }
+  onRowEditSave(art: Iartwork) { if (art.descricao.trim().length > 0) { delete this.clonedArtworks[art.id]; } }
+  onRowEditCancel(art: Iartwork, index: number) { this.artworks[index] = this.clonedArtworks[art.id]; delete this.clonedArtworks[art.id]; }
   excluir(id: number) { this.artworks = this.artworks.filter(a => a.id !== id); }
 
   getSeverity(tipo: TipoArt) {

@@ -5,5 +5,5 @@ export interface Iartwork {
     img: URL;
     descricao:string;
     tipoArt: TipoArt;
-    privado: true;
+    privado: boolean;
 }
