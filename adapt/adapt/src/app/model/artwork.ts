@@ -2,7 +2,7 @@ export type TipoArt = 'Digital' | 'Moderna' | 'Classica' | 'Abstrata' | 'Escultu
 
 export interface Iartwork {
     id: number;
-    img: URL;
+    img: string;
     descricao:string;
     tipoArt: TipoArt;
     privado: boolean;
