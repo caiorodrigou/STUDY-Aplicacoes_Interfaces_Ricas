@@ -13,11 +13,11 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { DialogModule } from 'primeng/dialog';
 import { IconFieldModule } from 'primeng/iconfield';  
 import { InputIconModule } from 'primeng/inputicon';   
-import { Iartwork } from '../model/artwork';
-import { TipoArt } from '../model/artwork';
+import { Iartwork } from '../../model/artwork';
+import { TipoArt } from '../../model/artwork';
 
 @Component({
-  selector: 'app-artwork-table',
+  selector: 'listar-arts',
   standalone: true,
   imports: [
     CommonModule, FormsModule, ButtonModule, CardModule, TableModule, 
@@ -26,7 +26,7 @@ import { TipoArt } from '../model/artwork';
   ],
   templateUrl: './artwork.html'
 })
-export class ArtworkComponent implements OnInit {
+export class Listar_arts implements OnInit {
   artworks: Iartwork[] = [];
   clonedArtworks: { [s: number]: Iartwork } = {};
 
@@ -47,8 +47,8 @@ export class ArtworkComponent implements OnInit {
 
   ngOnInit() {
     this.artworks = [
-      { id: 1, descricao: 'Noite Estrelada Reaginada', tipoArt: 'Digital', img: new URL('https://placehold.co/60x60'), privado: false },
-      { id: 2, descricao: 'O Pensador Minimalista', tipoArt: 'Escultura', img: new URL('https://placehold.co/60x60'), privado: true }
+      { id: 1, descricao: 'Noite Estrelada Reaginada', tipoArt: 'Digital', img: ('https://placehold.co/60x60'), privado: false },
+      { id: 2, descricao: 'O Pensador Minimalista', tipoArt: 'Escultura', img: ('https://placehold.co/60x60'), privado: true }
     ];
   }
 
@@ -69,7 +69,7 @@ export class ArtworkComponent implements OnInit {
       descricao: this.novaArtDescricao,
       tipoArt: this.novaArtTipo,
       privado: this.novaArtPrivado,
-      img: new URL(urlFinal) 
+      img: (urlFinal) 
     };
 
     this.artworks = [...this.artworks, arteParaAdicionar];
