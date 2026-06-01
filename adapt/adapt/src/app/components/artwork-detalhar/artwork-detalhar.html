@@ -1,0 +1,34 @@
+<div class="flex flex-col gap-5 px-1">
+  <div class="flex justify-center">
+    <img
+      [src]="obra().img"
+      [alt]="obra().descricao"
+      class="w-48 h-48 rounded-xl object-cover border border-slate-700 shadow-lg"
+    />
+  </div>
+
+  <div class="grid gap-3 text-sm">
+    <div class="flex justify-between border-b border-slate-800 pb-2">
+      <span class="text-slate-400">ID</span>
+      <span class="text-slate-100 font-medium">#{{ obra().id }}</span>
+    </div>
+    <div class="flex justify-between border-b border-slate-800 pb-2">
+      <span class="text-slate-400">Descrição</span>
+      <span class="text-slate-100 font-medium text-right max-w-[60%]">{{ obra().descricao }}</span>
+    </div>
+    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+      <span class="text-slate-400">Estilo</span>
+      <p-tag
+        [value]="obra().tipoArt"
+        [style]="{ background: 'rgba(34, 211, 238, 0.1)', color: '#22d3ee', border: '1px solid rgba(34, 211, 238, 0.2)' }"
+      />
+    </div>
+    <div class="flex justify-between items-center">
+      <span class="text-slate-400">Privacidade</span>
+      <span [class]="obra().privado ? 'text-rose-400' : 'text-emerald-400'">
+        <i class="pi mr-1" [ngClass]="obra().privado ? 'pi-lock' : 'pi-globe'"></i>
+        {{ obra().privado ? 'Privado' : 'Público' }}
+      </span>
+    </div>
+  </div>
+</div>

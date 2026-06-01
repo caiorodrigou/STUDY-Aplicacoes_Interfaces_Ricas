@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ArtworkListar } from './artwork-listar';
 
-import { Forms_Art } from './forms';
-
-describe('AdicionarArt', () => {
-  let component: Forms_Art;
-  let fixture: ComponentFixture<Forms_Art>;
+describe('ArtworkListar', () => {
+  let component: ArtworkListar;
+  let fixture: ComponentFixture<ArtworkListar>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Forms_Art],
+      imports: [ArtworkListar],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Forms_Art);
+    fixture = TestBed.createComponent(ArtworkListar);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('artworks', []);
     await fixture.whenStable();
   });
 

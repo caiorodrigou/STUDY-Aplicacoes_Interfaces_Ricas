@@ -1,1 +1,46 @@
-<Forms_art> </Forms_art>
+<div class="fixed inset-0 -z-10 bg-gradient-to-br from-slate-900 via-slate-950 to-cyan-950"></div>
+
+<main class="min-h-screen w-full max-w-7xl mx-auto p-6 flex flex-col gap-8">
+  <section class="flex justify-center lg:justify-start">
+    <artwork-incluir (arteCriada)="adicionarArte($event)" />
+  </section>
+
+  <section>
+    <artwork-listar
+      [artworks]="artworks()"
+      (detalhar)="abrirDetalhe($event)"
+      (alterar)="abrirAlterar($event)"
+      (excluir)="excluirObra($event)"
+    />
+  </section>
+</main>
+
+<p-dialog
+  header="Detalhes da Obra"
+  [visible]="exibirDetalhe()"
+  (visibleChange)="exibirDetalhe.set($event)"
+  [modal]="true"
+  [style]="{ width: '32rem' }"
+  styleClass="!bg-slate-900 !border !border-slate-700 !text-slate-100"
+>
+  @if (obraSelecionada(); as obra) {
+    <artwork-detalhar [obra]="obra" />
+  }
+</p-dialog>
+
+<p-dialog
+  header="Alterar Obra"
+  [visible]="exibirAlterar()"
+  (visibleChange)="exibirAlterar.set($event)"
+  [modal]="true"
+  [style]="{ width: '28rem' }"
+  styleClass="!bg-slate-900 !border !border-slate-700 !text-slate-100"
+>
+  @if (exibirAlterar()) {
+    <artwork-alterar
+      [(obra)]="obraEdicao"
+      (salvar)="confirmarAlteracao($event)"
+      (cancelar)="cancelarAlteracao()"
+    />
+  }
+</p-dialog>

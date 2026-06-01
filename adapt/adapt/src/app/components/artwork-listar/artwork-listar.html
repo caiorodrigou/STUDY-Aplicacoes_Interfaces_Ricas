@@ -1,0 +1,100 @@
+<div class="w-full">
+  <p-card styleClass="w-full shadow-2xl !bg-slate-900/80 !text-slate-100 !border !border-slate-700/50 backdrop-blur-xl rounded-xl overflow-hidden">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 px-2">
+      <h1 class="!text-cyan-400 font-extrabold text-3xl tracking-tight">Galeria de Artes</h1>
+
+      <p-iconfield>
+        <p-inputicon class="pi pi-search !text-slate-400" />
+        <input
+          pInputText
+          type="text"
+          (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+          placeholder="Buscar por descrição ou estilo..."
+          class="!bg-slate-950/50 !text-slate-100 !border-slate-700 placeholder:!text-slate-500 focus:!border-cyan-500 !w-64 md:!w-80 rounded-lg transition-all"
+        />
+      </p-iconfield>
+    </div>
+
+    <p-table
+      #dt
+      [value]="artworks()"
+      dataKey="id"
+      [paginator]="true"
+      [rows]="5"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [responsiveLayout]="'scroll'"
+      styleClass="!border !border-pink-500 rounded-lg shadow-lg"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:15%">Imagem</th>
+          <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:30%" pSortableColumn="descricao">
+            Descrição <p-sortIcon field="descricao" class="!text-slate-500" />
+          </th>
+          <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:20%" pSortableColumn="tipoArt">
+            Estilo <p-sortIcon field="tipoArt" class="!text-slate-500" />
+          </th>
+          <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:15%">Privacidade</th>
+          <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:20%">Ações</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-art>
+        <tr class="hover:!bg-slate-800/40 transition-colors border-b border-slate-800/50">
+          <td class="!bg-transparent !py-4">
+            <img [src]="art.img" alt="Arte" class="w-14 h-14 rounded-lg shadow-lg object-cover !border !border-slate-700" />
+          </td>
+          <td class="!bg-transparent !text-slate-300">{{ art.descricao }}</td>
+          <td class="!bg-transparent">
+            <p-tag
+              [value]="art.tipoArt"
+              [style]="{ background: 'rgba(34, 211, 238, 0.1)', color: '#22d3ee', border: '1px solid rgba(34, 211, 238, 0.2)' }"
+            />
+          </td>
+          <td class="!bg-transparent">
+            <div class="flex items-center gap-2">
+              <i class="pi" [ngClass]="art.privado ? 'pi-lock !text-rose-400' : 'pi-globe !text-emerald-400'"></i>
+              <span [ngClass]="art.privado ? '!text-rose-400' : '!text-emerald-400'">
+                {{ art.privado ? 'Privado' : 'Público' }}
+              </span>
+            </div>
+          </td>
+          <td class="!bg-transparent">
+            <div class="flex items-center gap-2">
+              <p-button
+                icon="pi pi-eye"
+                [text]="true"
+                [rounded]="true"
+                styleClass="!text-slate-300 hover:!bg-slate-500/10"
+                (onClick)="detalhar.emit(art)"
+                ariaLabel="Detalhar"
+              />
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                styleClass="!text-cyan-400 hover:!bg-cyan-500/10"
+                (onClick)="alterar.emit(art)"
+                ariaLabel="Alterar"
+              />
+              <p-button
+                icon="pi pi-trash"
+                [text]="true"
+                [rounded]="true"
+                styleClass="!text-rose-500 hover:!bg-rose-500/10"
+                (onClick)="excluir.emit(art.id)"
+                ariaLabel="Excluir"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="!text-center !text-slate-400 !py-8">Nenhuma obra cadastrada.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>

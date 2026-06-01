@@ -1,0 +1,12 @@
+main {
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 1024px) {
+  main {
+    display: grid;
+    grid-template-columns: minmax(20rem, 24rem) 1fr;
+    align-items: start;
+    gap: 2rem;
+  }
+}

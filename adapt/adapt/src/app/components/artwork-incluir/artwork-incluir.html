@@ -1,0 +1,84 @@
+<div class="w-full">
+  <p-card
+    styleClass="w-full max-w-md !bg-[#0f172a] !border !border-cyan-500/20 shadow-xl shadow-cyan-500/5 !rounded-2xl overflow-hidden"
+  >
+    <ng-template pTemplate="title">
+      <h2 class="text-center text-2xl font-bold text-cyan-400 tracking-wide !m-0">
+        Incluir Nova Arte
+      </h2>
+    </ng-template>
+
+    <form (submit)="onSubmit($event)" class="space-y-5">
+      <div class="flex flex-col gap-1.5">
+        <label for="descricao" class="text-sm font-semibold text-slate-300">Descrição da Obra</label>
+        <input
+          pInputText
+          id="descricao"
+          type="text"
+          [formField]="artForm.descricao"
+          (focus)="limparSubmetido()"
+          placeholder="Ex: Noite Estrelada..."
+          class="w-full !bg-[#1e293b] !border-slate-700 !rounded-lg !px-4 !py-2.5 !text-slate-100 placeholder:!text-slate-500 focus:!border-cyan-500 focus:!ring-1 focus:!ring-cyan-500"
+        />
+        @if (artForm.descricao().invalid() && artForm.descricao().touched() && !submetido()) {
+          <p class="text-red-400 text-xs flex items-center gap-1 mt-0.5">
+            <span>⚠️</span> A descrição da arte é obrigatória.
+          </p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="img" class="text-sm font-semibold text-slate-300">URL da Imagem</label>
+        <input
+          pInputText
+          id="img"
+          type="url"
+          [formField]="artForm.img"
+          (focus)="limparSubmetido()"
+          placeholder="https://link-da-imagem.com/foto.jpg"
+          class="w-full !bg-[#1e293b] !border-slate-700 !rounded-lg !px-4 !py-2.5 !text-slate-100 placeholder:!text-slate-500 focus:!border-cyan-500 focus:!ring-1 focus:!ring-cyan-500"
+        />
+        @if (artForm.img().invalid() && artForm.img().touched() && !submetido()) {
+          <p class="text-red-400 text-xs flex items-center gap-1 mt-0.5">
+            <span>⚠️</span> A URL da imagem é obrigatória.
+          </p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="tipoArt" class="text-sm font-semibold text-slate-300">Estilo Artístico</label>
+        <p-select
+          inputId="tipoArt"
+          name="tipoArt"
+          [options]="opcoesTipoArt"
+          optionLabel="label"
+          optionValue="value"
+          [(ngModel)]="tipoArt"
+          (onChange)="limparSubmetido()"
+          appendTo="body"
+          class="w-full"
+          styleClass="!bg-[#1e293b] !border-slate-700 !rounded-lg !text-slate-100 focus:!border-cyan-500"
+        />
+      </div>
+
+      <div class="flex items-center gap-3 py-1 bg-slate-950/40 p-3 rounded-lg border border-slate-800">
+        <p-checkbox name="privado" [(ngModel)]="privado" [binary]="true" inputId="privado" (onChange)="limparSubmetido()" />
+        <label for="privado" class="text-sm text-slate-300 cursor-pointer select-none">Tornar esta obra privada?</label>
+      </div>
+
+      @if (submetido()) {
+        <p class="text-emerald-400 text-sm text-center">Obra adicionada à galeria!</p>
+      }
+
+      <div class="flex justify-end pt-2">
+        <p-button
+          type="submit"
+          [disabled]="artForm.descricao().invalid() || artForm.img().invalid() || artForm.tipoArt().invalid()"
+          label="Salvar Obra"
+          icon="pi pi-check"
+          styleClass="!bg-cyan-500 !border-none hover:!bg-cyan-400 !text-slate-900 font-semibold shadow-md shadow-cyan-500/20"
+        />
+      </div>
+    </form>
+  </p-card>
+</div>
