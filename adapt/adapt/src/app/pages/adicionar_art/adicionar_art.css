@@ -1,12 +1,13 @@
-main {
-  padding-bottom: 2rem;
+@reference "../../../styles.css";
+
+.galeria-dialog .p-dialog {
+  @apply rounded-2xl border-2 border-ink bg-card text-ink shadow-[8px_8px_0_0_#1a1a1a];
 }
 
-@media (min-width: 1024px) {
-  main {
-    display: grid;
-    grid-template-columns: minmax(20rem, 24rem) 1fr;
-    align-items: start;
-    gap: 2rem;
-  }
+.galeria-dialog .p-dialog-header {
+  @apply border-b-2 border-ink bg-sunny-light font-display text-xl font-bold text-ink;
+}
+
+.galeria-dialog .p-dialog-content {
+  @apply bg-card;
 }

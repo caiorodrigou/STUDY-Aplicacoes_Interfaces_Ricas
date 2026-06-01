@@ -1,8 +1,7 @@
-import { Component, output, signal } from '@angular/core';
+import { Component, output, signal, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { form, FormField, required } from '@angular/forms/signals';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -11,17 +10,18 @@ import { Iartwork, TipoArt } from '../../model/artwork';
 @Component({
   selector: 'artwork-incluir',
   standalone: true,
+  host: { class: 'block h-full' },
   imports: [
     FormsModule,
     FormField,
     ButtonModule,
-    CardModule,
     InputTextModule,
     SelectModule,
     CheckboxModule,
   ],
   templateUrl: './artwork-incluir.html',
   styleUrl: './artwork-incluir.css',
+  encapsulation: ViewEncapsulation.None,
 })
 export class ArtworkIncluir {
   arteCriada = output<Omit<Iartwork, 'id'>>();

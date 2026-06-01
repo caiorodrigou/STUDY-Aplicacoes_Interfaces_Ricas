@@ -1,4 +1,4 @@
-import { Component, model, signal } from '@angular/core';
+import { Component, model, signal, ViewEncapsulation } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { ArtworkIncluir } from '../../components/artwork-incluir/artwork-incluir';
 import { ArtworkListar } from '../../components/artwork-listar/artwork-listar';
@@ -18,6 +18,7 @@ import { Iartwork } from '../../model/artwork';
   ],
   templateUrl: './adicionar_art.html',
   styleUrl: './adicionar_art.css',
+  encapsulation: ViewEncapsulation.None,
 })
 export class Adicionar_Art {
   artworks = signal<Iartwork[]>([

@@ -1,4 +1,4 @@
-import { Component, model, output } from '@angular/core';
+import { Component, model, output, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -11,6 +11,8 @@ import { Iartwork, TipoArt } from '../../model/artwork';
   standalone: true,
   imports: [FormsModule, ButtonModule, InputTextModule, SelectModule, CheckboxModule],
   templateUrl: './artwork-alterar.html',
+  styleUrl: './artwork-alterar.css',
+  encapsulation: ViewEncapsulation.None,
 })
 export class ArtworkAlterar {
   obra = model.required<Iartwork>();

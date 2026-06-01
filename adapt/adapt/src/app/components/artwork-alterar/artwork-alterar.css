@@ -1,0 +1,64 @@
+@reference "../../../styles.css";
+
+.alterar-label {
+  @apply text-[11px] font-bold uppercase tracking-[0.2em] text-ink-soft;
+}
+
+.alterar-input {
+  @apply w-full rounded-xl border-2 border-ink bg-white px-4 py-2.5 text-ink placeholder:text-muted transition-all;
+  @apply focus:border-sunny focus:outline-none focus:ring-4 focus:ring-sunny/25;
+}
+
+.alterar-btn-primary {
+  @apply rounded-full border-2 border-ink bg-sunny font-display font-semibold text-ink shadow-[3px_3px_0_0_#1a1a1a];
+  @apply hover:bg-sunny-dark;
+}
+
+.alterar-btn-ghost {
+  @apply rounded-full border-2 border-ink bg-white font-semibold text-ink hover:bg-sunny-light;
+}
+
+.p-checkbox.alterar-checkbox .p-checkbox-box {
+  @apply border border-line bg-white!;
+}
+
+.p-checkbox.alterar-checkbox:not(.p-disabled):hover .p-checkbox-box {
+  @apply border-sunny bg-white!;
+}
+
+.p-checkbox.alterar-checkbox.p-checkbox-checked .p-checkbox-box {
+  @apply border-sunny-dark bg-sunny!;
+}
+
+.p-checkbox.alterar-checkbox.p-checkbox-checked .p-checkbox-icon {
+  @apply text-ink!;
+}
+
+.p-select.alterar-select .p-select-label {
+  @apply text-ink!;
+}
+
+.p-select.alterar-select .p-select-dropdown-icon {
+  @apply text-muted!;
+}
+
+.p-select-overlay.alterar-select-panel {
+  @apply border border-line bg-white shadow-lg;
+}
+
+.p-select-overlay.alterar-select-panel .p-select-option {
+  @apply bg-white text-ink!;
+}
+
+.p-select-overlay.alterar-select-panel .p-select-option:not(.p-disabled).p-focus {
+  @apply bg-sunny-light text-ink!;
+}
+
+.p-select-overlay.alterar-select-panel .p-select-option.p-select-option-selected,
+.p-select-overlay.alterar-select-panel .p-select-option.p-select-option-selected.p-focus {
+  @apply bg-sunny-light text-ink!;
+}
+
+.p-select-overlay.alterar-select-panel [role="option"] {
+  @apply text-ink!;
+}

@@ -1,34 +1,28 @@
-<div class="flex flex-col gap-5 px-1">
-  <div class="flex justify-center">
-    <img
-      [src]="obra().img"
-      [alt]="obra().descricao"
-      class="w-48 h-48 rounded-xl object-cover border border-slate-700 shadow-lg"
-    />
+<div class="flex flex-col gap-6">
+  <div class="relative overflow-hidden rounded-xl border-2 border-ink bg-sunny shadow-[4px_4px_0_0_#1a1a1a]">
+    <img [src]="obra().img" [alt]="obra().descricao" class="aspect-square w-full object-cover" />
+    <div class="absolute bottom-0 left-0 right-0 border-t-2 border-ink bg-white/95 p-4">
+      <p-tag [value]="obra().tipoArt" styleClass="detalhar-tag mb-2" />
+      <h3 class="font-display text-xl font-bold text-ink">{{ obra().descricao }}</h3>
+    </div>
   </div>
 
-  <div class="grid gap-3 text-sm">
-    <div class="flex justify-between border-b border-slate-800 pb-2">
-      <span class="text-slate-400">ID</span>
-      <span class="text-slate-100 font-medium">#{{ obra().id }}</span>
-    </div>
-    <div class="flex justify-between border-b border-slate-800 pb-2">
-      <span class="text-slate-400">Descrição</span>
-      <span class="text-slate-100 font-medium text-right max-w-[60%]">{{ obra().descricao }}</span>
-    </div>
-    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-      <span class="text-slate-400">Estilo</span>
-      <p-tag
-        [value]="obra().tipoArt"
-        [style]="{ background: 'rgba(34, 211, 238, 0.1)', color: '#22d3ee', border: '1px solid rgba(34, 211, 238, 0.2)' }"
-      />
+  <dl class="grid gap-3 text-sm">
+    <div class="flex justify-between border-b-2 border-line pb-2">
+      <dt class="detalhar-label">ID</dt>
+      <dd class="font-display font-bold text-sunny-dark">#{{ obra().id }}</dd>
     </div>
     <div class="flex justify-between items-center">
-      <span class="text-slate-400">Privacidade</span>
-      <span [class]="obra().privado ? 'text-rose-400' : 'text-emerald-400'">
-        <i class="pi mr-1" [ngClass]="obra().privado ? 'pi-lock' : 'pi-globe'"></i>
-        {{ obra().privado ? 'Privado' : 'Público' }}
-      </span>
+      <dt class="detalhar-label">Visibilidade</dt>
+      <dd>
+        <span
+          class="inline-flex items-center gap-1 rounded-lg border-2 border-ink px-3 py-1 text-xs font-bold"
+          [ngClass]="obra().privado ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'"
+        >
+          <i class="pi text-[10px]" [ngClass]="obra().privado ? 'pi-lock' : 'pi-globe'"></i>
+          {{ obra().privado ? 'Privado' : 'Público' }}
+        </span>
+      </dd>
     </div>
-  </div>
+  </dl>
 </div>

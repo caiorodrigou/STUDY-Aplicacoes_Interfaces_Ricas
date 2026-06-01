@@ -1,100 +1,113 @@
-<div class="w-full">
-  <p-card styleClass="w-full shadow-2xl !bg-slate-900/80 !text-slate-100 !border !border-slate-700/50 backdrop-blur-xl rounded-xl overflow-hidden">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 px-2">
-      <h1 class="!text-cyan-400 font-extrabold text-3xl tracking-tight">Galeria de Artes</h1>
+<div class="flex h-full min-h-[32rem] w-full flex-col lg:min-h-full">
+  <div class="listar-card flex h-full min-h-[32rem] flex-col overflow-hidden bg-white p-5 sm:p-6 lg:min-h-full">
+    <div class="mb-4 flex shrink-0 flex-col gap-4 border-b border-line pb-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <span class="listar-label">Acervo</span>
+        <h2 class="font-display mt-1 text-2xl font-bold text-ink sm:text-3xl">Suas obras</h2>
+        <p class="mt-1 text-sm font-medium text-muted">{{ artworks().length }} peça(s) cadastrada(s)</p>
+      </div>
 
-      <p-iconfield>
-        <p-inputicon class="pi pi-search !text-slate-400" />
+      <p-iconfield iconPosition="left" class="w-full shrink-0 sm:w-64">
+        <p-inputicon class="pi pi-search text-muted!" />
         <input
           pInputText
           type="text"
           (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-          placeholder="Buscar por descrição ou estilo..."
-          class="!bg-slate-950/50 !text-slate-100 !border-slate-700 placeholder:!text-slate-500 focus:!border-cyan-500 !w-64 md:!w-80 rounded-lg transition-all"
+          placeholder="Buscar..."
+          class="listar-input pl-10!"
         />
       </p-iconfield>
     </div>
 
-    <p-table
-      #dt
-      [value]="artworks()"
-      dataKey="id"
-      [paginator]="true"
-      [rows]="5"
-      [rowsPerPageOptions]="[5, 10, 20]"
-      [responsiveLayout]="'scroll'"
-      styleClass="!border !border-pink-500 rounded-lg shadow-lg"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:15%">Imagem</th>
-          <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:30%" pSortableColumn="descricao">
-            Descrição <p-sortIcon field="descricao" class="!text-slate-500" />
-          </th>
-          <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:20%" pSortableColumn="tipoArt">
-            Estilo <p-sortIcon field="tipoArt" class="!text-slate-500" />
-          </th>
-          <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:15%">Privacidade</th>
-          <th class="!bg-slate-950/80 !text-cyan-200 !border-b !border-slate-800 py-4" style="width:20%">Ações</th>
-        </tr>
-      </ng-template>
+    <div class="listar-table-scroll min-h-0 flex-1 rounded-xl border border-line bg-white">
+      <p-table
+        #dt
+        [value]="artworks()"
+        dataKey="id"
+        [paginator]="true"
+        [rows]="4"
+        [rowsPerPageOptions]="[4, 8, 12]"
+        [scrollable]="true"
+        scrollHeight="flex"
+        [responsiveLayout]="'scroll'"
+        styleClass="listar-table listar-table-light h-full w-full"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="bg-white! py-3 text-left text-[10px] font-bold tracking-widest text-ink-soft uppercase">Preview</th>
+            <th class="bg-white! py-3 text-left text-[10px] font-bold tracking-widest text-ink-soft uppercase" pSortableColumn="descricao">
+              Descrição <p-sortIcon field="descricao" />
+            </th>
+            <th class="bg-white! py-3 text-left text-[10px] font-bold tracking-widest text-ink-soft uppercase" pSortableColumn="tipoArt">
+              Estilo <p-sortIcon field="tipoArt" />
+            </th>
+            <th class="bg-white! py-3 text-left text-[10px] font-bold tracking-widest text-ink-soft uppercase">Status</th>
+            <th class="bg-white! py-3 text-right text-[10px] font-bold tracking-widest text-ink-soft uppercase">Ações</th>
+          </tr>
+        </ng-template>
 
-      <ng-template pTemplate="body" let-art>
-        <tr class="hover:!bg-slate-800/40 transition-colors border-b border-slate-800/50">
-          <td class="!bg-transparent !py-4">
-            <img [src]="art.img" alt="Arte" class="w-14 h-14 rounded-lg shadow-lg object-cover !border !border-slate-700" />
-          </td>
-          <td class="!bg-transparent !text-slate-300">{{ art.descricao }}</td>
-          <td class="!bg-transparent">
-            <p-tag
-              [value]="art.tipoArt"
-              [style]="{ background: 'rgba(34, 211, 238, 0.1)', color: '#22d3ee', border: '1px solid rgba(34, 211, 238, 0.2)' }"
-            />
-          </td>
-          <td class="!bg-transparent">
-            <div class="flex items-center gap-2">
-              <i class="pi" [ngClass]="art.privado ? 'pi-lock !text-rose-400' : 'pi-globe !text-emerald-400'"></i>
-              <span [ngClass]="art.privado ? '!text-rose-400' : '!text-emerald-400'">
+        <ng-template pTemplate="body" let-art>
+          <tr class="group bg-white transition-colors hover:bg-canvas-warm">
+            <td class="bg-white! py-3 group-hover:bg-canvas-warm!">
+              <img
+                [src]="art.img"
+                [alt]="art.descricao"
+                class="h-14 w-14 rounded-xl border border-line object-cover transition-transform group-hover:scale-105"
+              />
+            </td>
+            <td class="bg-white! py-3 font-medium text-ink group-hover:bg-canvas-warm!">{{ art.descricao }}</td>
+            <td class="bg-white! py-3 group-hover:bg-canvas-warm!">
+              <p-tag [value]="art.tipoArt" styleClass="listar-tag" />
+            </td>
+            <td class="bg-white! py-3 group-hover:bg-canvas-warm!">
+              <span
+                class="inline-flex items-center gap-1 rounded-lg border border-line bg-white px-2.5 py-0.5 text-xs font-semibold"
+                [ngClass]="art.privado ? 'text-rose-700' : 'text-emerald-700'"
+              >
+                <i class="pi text-[10px]" [ngClass]="art.privado ? 'pi-lock' : 'pi-globe'"></i>
                 {{ art.privado ? 'Privado' : 'Público' }}
               </span>
-            </div>
-          </td>
-          <td class="!bg-transparent">
-            <div class="flex items-center gap-2">
-              <p-button
-                icon="pi pi-eye"
-                [text]="true"
-                [rounded]="true"
-                styleClass="!text-slate-300 hover:!bg-slate-500/10"
-                (onClick)="detalhar.emit(art)"
-                ariaLabel="Detalhar"
-              />
-              <p-button
-                icon="pi pi-pencil"
-                [text]="true"
-                [rounded]="true"
-                styleClass="!text-cyan-400 hover:!bg-cyan-500/10"
-                (onClick)="alterar.emit(art)"
-                ariaLabel="Alterar"
-              />
-              <p-button
-                icon="pi pi-trash"
-                [text]="true"
-                [rounded]="true"
-                styleClass="!text-rose-500 hover:!bg-rose-500/10"
-                (onClick)="excluir.emit(art.id)"
-                ariaLabel="Excluir"
-              />
-            </div>
-          </td>
-        </tr>
-      </ng-template>
+            </td>
+            <td class="bg-white! py-3 text-right group-hover:bg-canvas-warm!">
+              <div class="inline-flex gap-0.5">
+                <p-button
+                  icon="pi pi-eye"
+                  [rounded]="true"
+                  [text]="true"
+                  styleClass="rounded-full! text-ink! hover:bg-sunny-light!"
+                  (onClick)="detalhar.emit(art)"
+                  ariaLabel="Detalhar"
+                />
+                <p-button
+                  icon="pi pi-pencil"
+                  [rounded]="true"
+                  [text]="true"
+                  styleClass="rounded-full! text-sunny-dark! hover:bg-sunny-light!"
+                  (onClick)="alterar.emit(art)"
+                  ariaLabel="Alterar"
+                />
+                <p-button
+                  icon="pi pi-trash"
+                  [rounded]="true"
+                  [text]="true"
+                  styleClass="rounded-full! text-rose-600! hover:bg-rose-50!"
+                  (onClick)="excluir.emit(art.id)"
+                  ariaLabel="Excluir"
+                />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
 
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="5" class="!text-center !text-slate-400 !py-8">Nenhuma obra cadastrada.</td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </p-card>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="bg-white! py-12 text-center">
+              <p class="font-display text-lg font-bold text-ink">Nenhuma obra ainda</p>
+              <p class="mt-1 text-sm text-muted">Publique sua primeira peça no formulário ao lado.</p>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
 </div>
