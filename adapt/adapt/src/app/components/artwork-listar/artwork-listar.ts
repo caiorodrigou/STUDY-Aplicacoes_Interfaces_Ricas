@@ -7,6 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { Iartwork } from '../../model/artwork';
+import { ArtworkService } from '../../services/artwork.service';
 
 @Component({
   selector: 'artwork-listar',
@@ -31,4 +32,15 @@ export class ArtworkListar {
   detalhar = output<Iartwork>();
   alterar = output<Iartwork>();
   excluir = output<number>();
+
+  constructor(private artworkService: ArtworkService) {}
+
+  onExcluir(id: number): void {
+    const success = this.artworkService.deleteArtwork(id);
+    if (success) {
+      this.excluir.emit(id);
+    } else {
+      alert('Erro ao remover a obra.');
+    }
+  }
 }
