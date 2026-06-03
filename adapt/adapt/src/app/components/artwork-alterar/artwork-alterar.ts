@@ -5,6 +5,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { Iartwork, TipoArt } from '../../model/artwork';
+import { ArtworkService } from '../../services/artwork.service';
 
 @Component({
   selector: 'artwork-alterar',
@@ -19,6 +20,8 @@ export class ArtworkAlterar {
 
   salvar = output<Iartwork>();
   cancelar = output<void>();
+
+  constructor(private artworkService: ArtworkService) {}
 
   opcoesTipoArt: { label: string; value: TipoArt }[] = [
     { label: 'Digital', value: 'Digital' },
@@ -66,7 +69,14 @@ export class ArtworkAlterar {
       alert('Descrição e URL da imagem são obrigatórias.');
       return;
     }
-    this.salvar.emit(this.obra());
+
+    // Usar o service para atualizar
+    const obraAtualizada = this.artworkService.updateArtwork(this.obra().id, this.obra());
+    if (obraAtualizada) {
+      this.salvar.emit(obraAtualizada);
+    } else {
+      alert('Erro ao atualizar a obra.');
+    }
   }
 
   onCancelar(): void {

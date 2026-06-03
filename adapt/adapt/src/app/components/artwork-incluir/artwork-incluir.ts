@@ -6,6 +6,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { Iartwork, TipoArt } from '../../model/artwork';
+import { ArtworkService } from '../../services/artwork.service';
 
 @Component({
   selector: 'artwork-incluir',
@@ -24,7 +25,9 @@ import { Iartwork, TipoArt } from '../../model/artwork';
   encapsulation: ViewEncapsulation.None,
 })
 export class ArtworkIncluir {
-  arteCriada = output<Omit<Iartwork, 'id'>>();
+  arteCriada = output<Iartwork>();
+
+  constructor(private artworkService: ArtworkService) {}
 
   submetido = signal(false);
 
@@ -58,12 +61,16 @@ export class ArtworkIncluir {
       return;
     }
 
-    this.arteCriada.emit({
+    const novaArte = {
       descricao: this.artForm.descricao().value(),
       img: this.artForm.img().value(),
       tipoArt: this.artForm.tipoArt().value(),
       privado: this.artForm.privado().value(),
-    });
+    };
+
+    // Usar o service para criar a arte
+    const arteComId = this.artworkService.createArtwork(novaArte);
+    this.arteCriada.emit(arteComId);
 
     this.submetido.set(true);
     this.artModel.set({
