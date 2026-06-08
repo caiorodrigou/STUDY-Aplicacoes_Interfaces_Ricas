@@ -18,10 +18,8 @@ import { ActivatedRoute, Router } from '@angular/router'; // Importações das r
 })
 export class ArtworkAlterar implements OnInit {
   
-  // Removido o model.required e criado um signal local inicializado vazio
   obra = signal<Iartwork>({} as Iartwork);
 
-  // Injeção do ActivatedRoute e Router adicionados ao construtor
   constructor(
     private artworkService: ArtworkService,
     private route: ActivatedRoute,
@@ -38,15 +36,12 @@ export class ArtworkAlterar implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Resgata o ID enviado pela rota ativa
     this.route.paramMap.subscribe(params => {
       const id = Number(params.get('id'));
-      
-      // Busca os dados da obra antiga para preencher o formulário
       const obraParaEditar = this.artworkService.getArtworkById(id);
       
       if (obraParaEditar) {
-        this.obra.set({ ...obraParaEditar }); // Clona o objeto para o signal
+        this.obra.set({ ...obraParaEditar }); 
       } else {
         alert('Obra para edição não encontrada!');
         this.onCancelar();
@@ -54,7 +49,6 @@ export class ArtworkAlterar implements OnInit {
     });
   }
 
-  // Seus getters e setters continuam IGUAIS, pois o signal também aceita a função .update()
   get descricao(): string { return this.obra().descricao; }
   set descricao(value: string) { this.obra.update((o) => ({ ...o, descricao: value })); }
 
@@ -75,7 +69,7 @@ export class ArtworkAlterar implements OnInit {
 
     const obraAtualizada = this.artworkService.updateArtwork(this.obra().id, this.obra());
     if (obraAtualizada) {
-      // Modificado de .emit() para navegação programática de volta à tela de listagem
+      
       this.router.navigate(['/listagem']);
     } else {
       alert('Erro ao atualizar a obra.');

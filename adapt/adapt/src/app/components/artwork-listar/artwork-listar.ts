@@ -28,7 +28,7 @@ import { Router } from '@angular/router';
   encapsulation: ViewEncapsulation.None,
 })
 export class ArtworkListar {
-  // Correção aqui: Injetando o service diretamente na propriedade para poder usar no toSignal
+ 
   private artworkService = inject(ArtworkService);
   private router = inject(Router);
 

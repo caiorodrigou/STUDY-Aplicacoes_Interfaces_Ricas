@@ -28,12 +28,10 @@ export class ArtworkDetalhar implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Captura o ID da URL usando o padrão do seu documento guia
+   
     this.route.paramMap.subscribe(params => {
-      const id = Number(params.get('id')); // Converte o ID para número
-      
-      // Busca a obra específica no seu Service pelo ID
-      // Nota: Ajuste o nome do método ('getArtworkById') caso no seu service ele se chame de outra forma
+      const id = Number(params.get('id')); 
+  
       const obraEncontrada = this.artworkService.getArtworkById(id);
       
       if (obraEncontrada) {
