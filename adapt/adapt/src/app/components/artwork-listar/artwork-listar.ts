@@ -1,13 +1,14 @@
-import { Component, input, output, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, inject } from '@angular/core'; // Importado inject
 import { CommonModule } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { InputTextModule } from 'primeng/inputtext';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-import { Iartwork } from '../../model/artwork';
 import { ArtworkService } from '../../services/artwork.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'artwork-listar',
@@ -27,20 +28,27 @@ import { ArtworkService } from '../../services/artwork.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class ArtworkListar {
-  artworks = input.required<Iartwork[]>();
+  // Correção aqui: Injetando o service diretamente na propriedade para poder usar no toSignal
+  private artworkService = inject(ArtworkService);
+  private router = inject(Router);
 
-  detalhar = output<Iartwork>();
-  alterar = output<Iartwork>();
-  excluir = output<number>();
+  artworks = toSignal(this.artworkService.getArtworks(), { initialValue: [] });
 
-  constructor(private artworkService: ArtworkService) {}
+  irParaInclusao(): void {
+    this.router.navigate(['/inclusao']);
+  }
+
+  irParaDetalhe(id: number): void {
+    this.router.navigate(['/detalhe', id]);
+  }
+
+  irParaAtualizacao(id: number): void {
+    this.router.navigate(['/atualizacao', id]);
+  }
 
   onExcluir(id: number): void {
-    const success = this.artworkService.deleteArtwork(id);
-    if (success) {
-      this.excluir.emit(id);
-    } else {
-      alert('Erro ao remover a obra.');
+    if (confirm('Deseja realmente excluir esta obra?')) {
+      this.artworkService.deleteArtwork(id);
     }
   }
 }

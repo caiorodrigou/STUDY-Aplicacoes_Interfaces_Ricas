@@ -1,35 +1,35 @@
-import { Component, output, signal, ViewEncapsulation } from '@angular/core';
+import { Component, signal, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { form, FormField, required } from '@angular/forms/signals';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { Iartwork, TipoArt } from '../../model/artwork';
 import { ArtworkService } from '../../services/artwork.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'artwork-incluir',
   standalone: true,
-  host: { class: 'block h-full' },
-  imports: [
-    FormsModule,
-    FormField,
-    ButtonModule,
-    InputTextModule,
-    SelectModule,
-    CheckboxModule,
-  ],
+  imports: [FormsModule, ButtonModule, InputTextModule, SelectModule, CheckboxModule],
   templateUrl: './artwork-incluir.html',
   styleUrl: './artwork-incluir.css',
   encapsulation: ViewEncapsulation.None,
 })
 export class ArtworkIncluir {
-  arteCriada = output<Iartwork>();
-
-  constructor(private artworkService: ArtworkService) {}
+  novaObra = signal<Omit<Iartwork, 'id'>>({
+    img: '',
+    descricao: '',
+    tipoArt: 'Digital',
+    privado: false
+  });
 
   submetido = signal(false);
+
+  constructor(
+    private artworkService: ArtworkService,
+    private router: Router
+  ) {}
 
   opcoesTipoArt: { label: string; value: TipoArt }[] = [
     { label: 'Digital', value: 'Digital' },
@@ -40,64 +40,37 @@ export class ArtworkIncluir {
     { label: 'Fotografia', value: 'Fotografia' },
   ];
 
-  artModel = signal<Omit<Iartwork, 'id'>>({
-    img: '',
-    descricao: '',
-    tipoArt: 'Digital',
-    privado: false,
-  });
+  get descricao(): string { return this.novaObra().descricao; }
+  set descricao(value: string) { this.novaObra.update((o) => ({ ...o, descricao: value })); }
 
-  artForm = form(this.artModel, (schemaPath) => {
-    required(schemaPath.img, { message: 'A URL da imagem é obrigatória.' });
-    required(schemaPath.descricao, { message: 'A descrição da arte é obrigatória.' });
-    required(schemaPath.tipoArt, { message: 'Selecione o tipo de arte.' });
-  });
+  get img(): string { return this.novaObra().img; }
+  set img(value: string) { this.novaObra.update((o) => ({ ...o, img: value })); }
+
+  get tipoArt(): TipoArt { return this.novaObra().tipoArt; }
+  set tipoArt(value: TipoArt) { this.novaObra.update((o) => ({ ...o, tipoArt: value })); }
+
+  get privado(): boolean { return this.novaObra().privado; }
+  set privado(value: boolean) { this.novaObra.update((o) => ({ ...o, privado: value })); }
 
   onSubmit(event: Event): void {
     event.preventDefault();
-
-    if (this.artForm().invalid()) {
-      alert('Por favor, preencha todos os campos corretamente.');
-      return;
-    }
-
-    const novaArte = {
-      descricao: this.artForm.descricao().value(),
-      img: this.artForm.img().value(),
-      tipoArt: this.artForm.tipoArt().value(),
-      privado: this.artForm.privado().value(),
-    };
-
-    // Usar o service para criar a arte
-    const arteComId = this.artworkService.createArtwork(novaArte);
-    this.arteCriada.emit(arteComId);
-
-    this.submetido.set(true);
-    this.artModel.set({
-      img: '',
-      descricao: '',
-      tipoArt: 'Digital',
-      privado: false,
-    });
+    this.onSalvar();
   }
 
   limparSubmetido(): void {
     this.submetido.set(false);
   }
 
-  get tipoArt(): TipoArt {
-    return this.artModel().tipoArt;
+  onSalvar(): void {
+    if (!this.novaObra().descricao.trim() || !this.novaObra().img.trim()) {
+      alert('Descrição e URL da imagem são obrigatórias.');
+      return;
+    }
+    this.artworkService.createArtwork(this.novaObra());
+    this.router.navigate(['/listagem']);
   }
 
-  set tipoArt(value: TipoArt) {
-    this.artModel.update((m) => ({ ...m, tipoArt: value }));
-  }
-
-  get privado(): boolean {
-    return this.artModel().privado;
-  }
-
-  set privado(value: boolean) {
-    this.artModel.update((m) => ({ ...m, privado: value }));
+  onCancelar(): void {
+    this.router.navigate(['/listagem']);
   }
 }

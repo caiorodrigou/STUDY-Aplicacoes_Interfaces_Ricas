@@ -1,40 +1,94 @@
-<div class="flex flex-col gap-5">
-  <div class="flex flex-col gap-2">
-    <label class="alterar-label">Descrição</label>
-    <input pInputText [(ngModel)]="descricao" placeholder="Ex: Noite Estrelada..." class="alterar-input" />
-  </div>
+<div class="flex h-full min-h-[32rem] w-full flex-col lg:min-h-full">
+  <div class="incluir-card flex h-full min-h-[32rem] flex-col overflow-hidden bg-white p-5 sm:p-6 lg:min-h-full">
+    
+    <div class="mb-4 flex shrink-0 flex-col gap-1 border-b border-line pb-4">
+      <span class="incluir-label text-sunny-dark!">Atualização</span>
+      <h2 class="font-display text-2xl font-bold text-ink sm:text-3xl">Editar Obra</h2>
+      <p class="mt-1 text-sm font-medium text-muted">Modifique as propriedades desejadas da peça selecionada.</p>
+    </div>
 
-  <div class="flex flex-col gap-2">
-    <label class="alterar-label">URL da imagem</label>
-    <input pInputText type="url" [(ngModel)]="img" placeholder="https://..." class="alterar-input" />
-  </div>
+    <div class="min-h-0 flex-1 overflow-y-auto pr-1">
+      <form (submit)="$event.preventDefault(); onSalvar()" class="flex flex-col gap-5">
+        
+        @if (img) {
+          <div class="flex flex-col gap-1.5 items-center sm:items-start">
+            <label class="text-xs font-bold tracking-wider text-black uppercase">Preview da Arte</label>
+            <img [src]="img" [alt]="descricao" class="h-28 w-28 rounded-xl border border-line object-cover bg-canvas-warm" />
+          </div>
+        }
 
-  <div class="flex flex-col gap-2">
-    <label class="alterar-label">Estilo</label>
-    <p-select
-      [options]="opcoesTipoArt"
-      optionLabel="label"
-      optionValue="value"
-      [(ngModel)]="tipoArt"
-      appendTo="body"
-      class="w-full"
-      styleClass="alterar-select w-full rounded-xl! border-2! border-ink! bg-white!"
-      panelStyleClass="alterar-select-panel"
-    />
-  </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-bold tracking-wider text-black uppercase">Descrição *</label>
+          <input 
+            pInputText 
+            type="text" 
+            [(ngModel)]="descricao" 
+            name="descricao" 
+            placeholder="Nome ou título descritivo da obra" 
+            class="incluir-input w-full bg-white! text-black! border border-line rounded-xl" 
+          />
+        </div>
 
-  <div class="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
-    <p-checkbox
-      [(ngModel)]="privado"
-      [binary]="true"
-      inputId="privado-alterar"
-      styleClass="alterar-checkbox"
-    />
-    <label for="privado-alterar" class="cursor-pointer text-sm font-medium text-ink select-none">Obra privada</label>
-  </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-bold tracking-wider text-black uppercase">URL da Imagem *</label>
+          <input 
+            pInputText 
+            type="text" 
+            [(ngModel)]="img" 
+            name="img" 
+            placeholder="https://exemplo.com/sua-arte.jpg" 
+            class="incluir-input w-full bg-white! text-black! border border-line rounded-xl" 
+          />
+        </div>
 
-  <div class="flex justify-end gap-3 border-t-2 border-line pt-4">
-    <p-button label="Cancelar" styleClass="alterar-btn-ghost!" (onClick)="onCancelar()" />
-    <p-button label="Salvar" icon="pi pi-check" styleClass="alterar-btn-primary!" (onClick)="onSalvar()" />
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-bold tracking-wider text-black uppercase">Estilo Artístico</label>
+          <p-select 
+            [options]="opcoesTipoArt" 
+            [(ngModel)]="tipoArt" 
+            name="tipoArt" 
+            optionLabel="label" 
+            optionValue="value" 
+            class="w-full"
+            styleClass="w-full bg-transparent! text-black! border border-line rounded-xl [&_.p-select-label]:text-black! [&_.p-select-placeholder]:text-black! [&_.p-select-icon]:text-black!"
+          ></p-select>
+        </div>
+
+        <div class="flex items-start gap-3 rounded-xl border border-line bg-canvas-warm p-4 transition-colors hover:border-sunny">
+          <p-checkbox 
+            [(ngModel)]="privado" 
+            name="privado" 
+            [binary]="true" 
+            inputId="privadoArtEdicao"
+            styleClass="mt-0.5"
+          ></p-checkbox>
+          <div class="flex flex-col gap-0.5 select-none">
+            <label for="privadoArtEdicao" class="text-sm font-bold text-ink cursor-pointer">Tornar esta obra privada</label>
+            <p class="text-xs text-muted font-medium">Obras privadas não aparecem em catálogos públicos.</p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 border-t border-line pt-5 mt-4">
+          <p-button 
+            label="Cancelar" 
+            severity="secondary" 
+            [text]="true" 
+            size="small"
+            styleClass="rounded-xl! font-semibold"
+            (onClick)="onCancelar()" 
+            type="button"
+          ></p-button>
+          <p-button 
+            label="Salvar Alterações" 
+            severity="warn" 
+            size="small"
+            styleClass="rounded-xl! font-semibold bg-sunny-dark! border-sunny-dark! px-5!"
+            type="submit" 
+            [disabled]="!descricao.trim() || !img.trim()"
+          ></p-button>
+        </div>
+      </form>
+    </div>
+
   </div>
 </div>
