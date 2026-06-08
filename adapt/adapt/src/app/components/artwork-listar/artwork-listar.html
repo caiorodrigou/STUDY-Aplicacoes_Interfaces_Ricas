@@ -3,7 +3,18 @@
     <div class="mb-4 flex shrink-0 flex-col gap-4 border-b border-line pb-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <span class="listar-label">Acervo</span>
-        <h2 class="font-display mt-1 text-2xl font-bold text-ink sm:text-3xl">Suas obras</h2>
+        <div class="flex flex-wrap items-center gap-3 mt-1">
+          <h2 class="font-display text-2xl font-bold text-ink sm:text-3xl">Suas obras</h2>
+          <p-button 
+            label="Nova Obra" 
+            icon="pi pi-plus" 
+            severity="success"
+            [outlined]="true"
+            size="small"
+            styleClass="rounded-xl!"
+            (onClick)="irParaInclusao()" 
+          />
+        </div>
         <p class="mt-1 text-sm font-medium text-muted">{{ artworks().length }} peça(s) cadastrada(s)</p>
       </div>
 
@@ -75,7 +86,7 @@
                   [rounded]="true"
                   [text]="true"
                   styleClass="rounded-full! text-ink! hover:bg-sunny-light!"
-                  (onClick)="detalhar.emit(art)"
+                  (onClick)="irParaDetalhe(art.id)"
                   ariaLabel="Detalhar"
                 />
                 <p-button
@@ -83,7 +94,7 @@
                   [rounded]="true"
                   [text]="true"
                   styleClass="rounded-full! text-sunny-dark! hover:bg-sunny-light!"
-                  (onClick)="alterar.emit(art)"
+                  (onClick)="irParaAtualizacao(art.id)"
                   ariaLabel="Alterar"
                 />
                 <p-button
@@ -103,7 +114,7 @@
           <tr>
             <td colspan="5" class="bg-white! py-12 text-center">
               <p class="font-display text-lg font-bold text-ink">Nenhuma obra ainda</p>
-              <p class="mt-1 text-sm text-muted">Publique sua primeira peça no formulário ao lado.</p>
+              <p class="mt-1 text-sm text-muted">Clique em "Nova Obra" acima para publicar sua primeira peça.</p>
             </td>
           </tr>
         </ng-template>

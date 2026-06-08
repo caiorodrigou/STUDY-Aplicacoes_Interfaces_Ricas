@@ -1,4 +1,4 @@
-import { Component, model, output, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -6,6 +6,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { Iartwork, TipoArt } from '../../model/artwork';
 import { ArtworkService } from '../../services/artwork.service';
+import { ActivatedRoute, Router } from '@angular/router'; // Importações das rotas adicionadas
 
 @Component({
   selector: 'artwork-alterar',
@@ -15,13 +16,17 @@ import { ArtworkService } from '../../services/artwork.service';
   styleUrl: './artwork-alterar.css',
   encapsulation: ViewEncapsulation.None,
 })
-export class ArtworkAlterar {
-  obra = model.required<Iartwork>();
+export class ArtworkAlterar implements OnInit {
+  
+  // Removido o model.required e criado um signal local inicializado vazio
+  obra = signal<Iartwork>({} as Iartwork);
 
-  salvar = output<Iartwork>();
-  cancelar = output<void>();
-
-  constructor(private artworkService: ArtworkService) {}
+  // Injeção do ActivatedRoute e Router adicionados ao construtor
+  constructor(
+    private artworkService: ArtworkService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   opcoesTipoArt: { label: string; value: TipoArt }[] = [
     { label: 'Digital', value: 'Digital' },
@@ -32,54 +37,53 @@ export class ArtworkAlterar {
     { label: 'Fotografia', value: 'Fotografia' },
   ];
 
-  get descricao(): string {
-    return this.obra().descricao;
+  ngOnInit(): void {
+    // Resgata o ID enviado pela rota ativa
+    this.route.paramMap.subscribe(params => {
+      const id = Number(params.get('id'));
+      
+      // Busca os dados da obra antiga para preencher o formulário
+      const obraParaEditar = this.artworkService.getArtworkById(id);
+      
+      if (obraParaEditar) {
+        this.obra.set({ ...obraParaEditar }); // Clona o objeto para o signal
+      } else {
+        alert('Obra para edição não encontrada!');
+        this.onCancelar();
+      }
+    });
   }
 
-  set descricao(value: string) {
-    this.obra.update((o) => ({ ...o, descricao: value }));
-  }
+  // Seus getters e setters continuam IGUAIS, pois o signal também aceita a função .update()
+  get descricao(): string { return this.obra().descricao; }
+  set descricao(value: string) { this.obra.update((o) => ({ ...o, descricao: value })); }
 
-  get img(): string {
-    return this.obra().img;
-  }
+  get img(): string { return this.obra().img; }
+  set img(value: string) { this.obra.update((o) => ({ ...o, img: value })); }
 
-  set img(value: string) {
-    this.obra.update((o) => ({ ...o, img: value }));
-  }
+  get tipoArt(): TipoArt { return this.obra().tipoArt; }
+  set tipoArt(value: TipoArt) { this.obra.update((o) => ({ ...o, tipoArt: value })); }
 
-  get tipoArt(): TipoArt {
-    return this.obra().tipoArt;
-  }
-
-  set tipoArt(value: TipoArt) {
-    this.obra.update((o) => ({ ...o, tipoArt: value }));
-  }
-
-  get privado(): boolean {
-    return this.obra().privado;
-  }
-
-  set privado(value: boolean) {
-    this.obra.update((o) => ({ ...o, privado: value }));
-  }
+  get privado(): boolean { return this.obra().privado; }
+  set privado(value: boolean) { this.obra.update((o) => ({ ...o, privado: value })); }
 
   onSalvar(): void {
-    if (!this.obra().descricao.trim() || !this.obra().img.trim()) {
+    if (!this.obra().descricao || !this.obra().descricao.trim() || !this.obra().img || !this.obra().img.trim()) {
       alert('Descrição e URL da imagem são obrigatórias.');
       return;
     }
 
-    // Usar o service para atualizar
     const obraAtualizada = this.artworkService.updateArtwork(this.obra().id, this.obra());
     if (obraAtualizada) {
-      this.salvar.emit(obraAtualizada);
+      // Modificado de .emit() para navegação programática de volta à tela de listagem
+      this.router.navigate(['/listagem']);
     } else {
       alert('Erro ao atualizar a obra.');
     }
   }
 
   onCancelar(): void {
-    this.cancelar.emit();
+    // Modificado de .emit() para navegação programática de volta à tela de listagem
+    this.router.navigate(['/listagem']);
   }
 }
