@@ -9,53 +9,58 @@ import { Iartwork } from '../model/artwork';
 export class ArtworkService {
   private http = inject(HttpClient);
 
-  // ⚠️ ATENÇÃO: Substitua pelo endereço gerado na aba "Ports" (porta 8000) do seu Codespaces!
-  private apiUrl = 'https://seu-codespace-8000.app.github.dev/api/artworks';
+  private apiUrl = 'https://verbose-potato-q74jxvxwxw79c9vrg-8000.app.github.dev/api/artworks';
 
-  // Gerenciamento de estado reativo com Signals solicitado nas notas de aula
   private artworksSignal = signal<Iartwork[]>([]);
   public artworks = this.artworksSignal.asReadonly();
 
   constructor() {
-    // Alimenta a listagem assim que o serviço é carregado no app
     this.listarDoBackend().subscribe();
   }
 
-  // Auxiliar interno para manter a lista do Signal sincronizada com o banco SQLite do Django
-  private listarDoBackend(): Observable<Iartwork[]> {
+  public listarDoBackend(): Observable<Iartwork[]> {
     return this.http.get<Iartwork[]>(`${this.apiUrl}/`).pipe(
       tap((dados) => this.artworksSignal.set(dados))
     );
   }
 
-  // 1. LISTAR (Substitui o antigo getArtworks/getAllArtworks)
   getArtworks(): Observable<Iartwork[]> {
     return this.listarDoBackend();
   }
 
-  // 2. DETALHAR (Buscar por ID no Django REST)
   getArtworkById(id: number): Observable<Iartwork> {
     return this.http.get<Iartwork>(`${this.apiUrl}/${id}/`);
   }
 
-  // 3. INSERIR (POST para o Django - o ID é gerado automaticamente pelo SQLite)
+
   createArtwork(artwork: Omit<Iartwork, 'id'>): Observable<Iartwork> {
     return this.http.post<Iartwork>(`${this.apiUrl}/`, artwork).pipe(
-      tap(() => this.listarDoBackend().subscribe()) // Atualiza a tela de listagem automaticamente
+      tap(() => {
+        // Força a atualização do Signal global do serviço
+        this.getArtworks().subscribe();
+      })
     );
   }
 
-  // 4. ATUALIZAR (PUT para o Django REST)
   updateArtwork(id: number, artwork: Partial<Iartwork>): Observable<Iartwork> {
     return this.http.put<Iartwork>(`${this.apiUrl}/${id}/`, artwork).pipe(
-      tap(() => this.listarDoBackend().subscribe()) // Sincroniza o Signal após a alteração
+      tap((obraAtualizada) => {
+        // Atualiza o Signal local substituindo a obra antiga pela nova modificada
+        const listaModificada = this.artworksSignal().map(art => 
+          art.id === id ? obraAtualizada : art
+        );
+        this.artworksSignal.set(listaModificada);
+      })
     );
   }
 
-  // 5. REMOVER (DELETE para o Django REST)
   deleteArtwork(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}/`).pipe(
-      tap(() => this.listarDoBackend().subscribe()) // Remove visualmente da listagem na hora
+      tap(() => {
+        // Remove o item excluído diretamente do Signal na memória do app
+        const listaAtualizada = this.artworksSignal().filter(art => art.id !== id);
+        this.artworksSignal.set(listaAtualizada);
+      })
     );
   }
 }

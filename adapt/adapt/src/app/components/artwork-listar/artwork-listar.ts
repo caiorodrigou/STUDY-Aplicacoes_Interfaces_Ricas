@@ -1,6 +1,5 @@
 import { Component, ViewEncapsulation, inject } from '@angular/core'; // Importado inject
 import { CommonModule } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
@@ -28,11 +27,11 @@ import { Router } from '@angular/router';
   encapsulation: ViewEncapsulation.None,
 })
 export class ArtworkListar {
- 
+  
   private artworkService = inject(ArtworkService);
   private router = inject(Router);
 
-  artworks = toSignal(this.artworkService.getArtworks(), { initialValue: [] });
+  artworks = this.artworkService.artworks; 
 
   irParaInclusao(): void {
     this.router.navigate(['/inclusao']);
@@ -47,8 +46,17 @@ export class ArtworkListar {
   }
 
   onExcluir(id: number): void {
-    if (confirm('Deseja realmente excluir esta obra?')) {
-      this.artworkService.deleteArtwork(id);
+    if (confirm('Deseja realmente remover esta obra permanentemente do acervo?')) {
+      
+      this.artworkService.deleteArtwork(id).subscribe({
+        next: () => {
+          console.log('Ordem de exclusão processada pelo servidor!');
+        },
+        error: (err) => {
+          console.error('Erro ao deletar no servidor:', err);
+          alert('Não foi possível excluir a obra do banco de dados.');
+        }
+      });
     }
   }
 }

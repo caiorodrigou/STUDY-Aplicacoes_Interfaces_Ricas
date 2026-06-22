@@ -54,7 +54,28 @@ export class ArtworkIncluir {
 
   onSubmit(event: Event): void {
     event.preventDefault();
-    this.onSalvar();
+
+    const dadosParaSalvar = {
+      descricao: this.descricao.trim(),
+      img: this.img.trim(),
+      tipoArt: this.tipoArt,
+      privado: this.privado
+    };
+
+    if (!dadosParaSalvar.descricao || !dadosParaSalvar.img) {
+      this.submetido.set(true); // Se tiver um signal de validação
+      return;
+    }
+
+    this.artworkService.createArtwork(dadosParaSalvar).subscribe({
+      next: () => {
+        this.router.navigate(['/listagem']); 
+      },
+      error: (err) => {
+        console.error('Erro ao salvar no Django:', err);
+        alert('Erro ao conectar com o servidor do Codespaces.');
+      }
+    });
   }
 
   limparSubmetido(): void {

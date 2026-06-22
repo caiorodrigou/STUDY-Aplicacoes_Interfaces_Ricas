@@ -16,11 +16,8 @@ import { ActivatedRoute, Router } from '@angular/router'; // Importações das r
 })
 export class ArtworkDetalhar implements OnInit {
   
-  // Alterado de input para um Signal gravável local. 
-  // Assim o seu HTML que já usa "obra().propriedade" continua funcionando perfeitamente!
   obra = signal<Iartwork | null>(null);
 
-  // Injeção do ActivatedRoute e Router no construtor
   constructor(
     private artworkService: ArtworkService,
     private route: ActivatedRoute,
@@ -28,22 +25,23 @@ export class ArtworkDetalhar implements OnInit {
   ) {}
 
   ngOnInit(): void {
-   
-    this.route.paramMap.subscribe(params => {
-      const id = Number(params.get('id')); 
-  
-      const obraEncontrada = this.artworkService.getArtworkById(id);
-      
-      if (obraEncontrada) {
+
+  this.route.paramMap.subscribe(params => {
+    const id = Number(params.get('id')); 
+
+    this.artworkService.getArtworkById(id).subscribe({
+      next: (obraEncontrada) => {
         this.obra.set(obraEncontrada);
-      } else {
-        alert('Obra não encontrada!');
-        this.voltar();
+      },
+      error: (err) => {
+        console.error('Erro ao detalhar obra:', err);
+        alert('Não foi possível carregar os detalhes desta obra.');
       }
     });
-  }
+  }); 
+}
 
   voltar(): void {
-    this.router.navigate(['/listagem']); // Volta de forma programática para a listagem
+    this.router.navigate(['/listagem']); 
   }
 }
