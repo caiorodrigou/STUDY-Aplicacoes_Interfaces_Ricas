@@ -1,91 +1,61 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 import { Iartwork } from '../model/artwork';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ArtworkService {
-  private artworksSubject = new BehaviorSubject<Iartwork[]>([
-    {
-      id: 1,
-      img: 'https://via.placeholder.com/300x400?text=Digital+Art+1',
-      descricao: 'Obra Digital 1',
-      tipoArt: 'Digital',
-      privado: false,
-    },
-    {
-      id: 2,
-      img: 'https://via.placeholder.com/300x400?text=Moderna+Art',
-      descricao: 'Obra Moderna',
-      tipoArt: 'Moderna',
-      privado: false,
-    },
-  ]);
+  private http = inject(HttpClient);
 
-  private nextId = 3;
+  // ⚠️ ATENÇÃO: Substitua pelo endereço gerado na aba "Ports" (porta 8000) do seu Codespaces!
+  private apiUrl = 'https://seu-codespace-8000.app.github.dev/api/artworks';
 
-  constructor() {}
+  // Gerenciamento de estado reativo com Signals solicitado nas notas de aula
+  private artworksSignal = signal<Iartwork[]>([]);
+  public artworks = this.artworksSignal.asReadonly();
 
+  constructor() {
+    // Alimenta a listagem assim que o serviço é carregado no app
+    this.listarDoBackend().subscribe();
+  }
+
+  // Auxiliar interno para manter a lista do Signal sincronizada com o banco SQLite do Django
+  private listarDoBackend(): Observable<Iartwork[]> {
+    return this.http.get<Iartwork[]>(`${this.apiUrl}/`).pipe(
+      tap((dados) => this.artworksSignal.set(dados))
+    );
+  }
+
+  // 1. LISTAR (Substitui o antigo getArtworks/getAllArtworks)
   getArtworks(): Observable<Iartwork[]> {
-    return this.artworksSubject.asObservable();
+    return this.listarDoBackend();
   }
 
-  getAllArtworks(): Iartwork[] {
-    return this.artworksSubject.getValue();
+  // 2. DETALHAR (Buscar por ID no Django REST)
+  getArtworkById(id: number): Observable<Iartwork> {
+    return this.http.get<Iartwork>(`${this.apiUrl}/${id}/`);
   }
 
-
-  getArtworkById(id: number): Iartwork | undefined {
-    const artworks = this.artworksSubject.getValue();
-    return artworks.find((artwork) => artwork.id === id);
+  // 3. INSERIR (POST para o Django - o ID é gerado automaticamente pelo SQLite)
+  createArtwork(artwork: Omit<Iartwork, 'id'>): Observable<Iartwork> {
+    return this.http.post<Iartwork>(`${this.apiUrl}/`, artwork).pipe(
+      tap(() => this.listarDoBackend().subscribe()) // Atualiza a tela de listagem automaticamente
+    );
   }
 
-
-  createArtwork(artwork: Omit<Iartwork, 'id'>): Iartwork {
-    const newArtwork: Iartwork = {
-      ...artwork,
-      id: this.nextId++,
-    };
-
-    const currentArtworks = this.artworksSubject.getValue();
-    this.artworksSubject.next([...currentArtworks, newArtwork]);
-
-    return newArtwork;
+  // 4. ATUALIZAR (PUT para o Django REST)
+  updateArtwork(id: number, artwork: Partial<Iartwork>): Observable<Iartwork> {
+    return this.http.put<Iartwork>(`${this.apiUrl}/${id}/`, artwork).pipe(
+      tap(() => this.listarDoBackend().subscribe()) // Sincroniza o Signal após a alteração
+    );
   }
 
-  // Atualizar artwork existente
-  updateArtwork(id: number, artwork: Partial<Iartwork>): Iartwork | undefined {
-    const currentArtworks = this.artworksSubject.getValue();
-    const index = currentArtworks.findIndex((a) => a.id === id);
-
-    if (index === -1) {
-      return undefined;
-    }
-
-    const updatedArtwork: Iartwork = {
-      ...currentArtworks[index],
-      ...artwork,
-      id, 
-    };
-
-    const updatedArtworks = [...currentArtworks];
-    updatedArtworks[index] = updatedArtwork;
-    this.artworksSubject.next(updatedArtworks);
-
-    return updatedArtwork;
-  }
-
-  // Remover artwork
-  deleteArtwork(id: number): boolean {
-    const currentArtworks = this.artworksSubject.getValue();
-    const filteredArtworks = currentArtworks.filter((a) => a.id !== id);
-
-    if (filteredArtworks.length === currentArtworks.length) {
-      return false; 
-    }
-
-    this.artworksSubject.next(filteredArtworks);
-    return true;
+  // 5. REMOVER (DELETE para o Django REST)
+  deleteArtwork(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}/`).pipe(
+      tap(() => this.listarDoBackend().subscribe()) // Remove visualmente da listagem na hora
+    );
   }
 }
